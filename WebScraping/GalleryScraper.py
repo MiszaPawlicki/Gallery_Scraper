@@ -7,23 +7,14 @@ import time
 def load_chrome_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')  # Run in headless mode (without opening browser window)
-    #driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(options=options) # Include this as a param if driver not installed: service=ChromeService(ChromeDriverManager().install())
     return driver
 
 def fetch_html_content(url, driver):
-    #get content
     driver.get(url)
-
-    #wait for load
     time.sleep(5)
-
-    # Get the HTML content
     html_content = driver.page_source
-
-    # Close the WebDriver
     driver.quit()
-
     return html_content
 
 def parse_html(html_content):

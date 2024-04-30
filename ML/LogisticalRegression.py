@@ -5,6 +5,7 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 from UrlFeaturizer import UrlFeaturizer
 
+#TODO implement url featurizer in logistical regression trainer
 
 def train_logistic_regression_model(csv_path):
     # Read data from CSV
