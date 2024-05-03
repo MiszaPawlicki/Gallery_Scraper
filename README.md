@@ -1,6 +1,6 @@
 <h1>An exhibitions app</h1>
-<h2>What is it?</h2>
-<p>This web and mobile app looks to improve on the current offering of applications that provide information on current exhibitions in London.</p>
+<h2>What is it any why is it needed?</h2>
+<p>This web and mobile app looks to improve on the current offering of applications that provide information on current exhibitions in London. Current offerings rely on exhibition info to be manually submitted or entered. The amount a gallery can submit is dependant on how much they pay. This leads to apps only displaying known galleries and popular artists. This app looks to diversify the exhibitions suggested to the user.</p>
 <h2>How does it work</h2>
 <h3>How is data gathered</h3>
 <p>Web-scraping! Using a combination of ML and NLP techniques, info on exhibitions is lifted from the websites of galleries and stored in the DB.</p>
