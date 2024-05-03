@@ -1,82 +1,109 @@
 import os
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 import joblib
-from UrlFeaturizer import UrlFeaturizer
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
+from ML.Featurizers import UrlFeaturizer
 
-#TODO implement url featurizer in logistical regression trainer
+#TODO refactor so model is only loaded once
+#TODO get rid of warning on prediction
+#TODO add more features to improve performance
 
-def train_logistic_regression_model(csv_path):
-    # Read data from CSV
+def train_logistical_regression_model(csv_path):
+
+    # Load the dataset
     df = pd.read_csv(csv_path)
 
-    # Feature extraction
-    X = df['href']
+    # Initialize an empty list to store the features
+    X = []
+
+    # Initialize the UrlFeaturizer
+    featurizer = UrlFeaturizer("")
+
+    # Extract features using the UrlFeaturizer for each URL in the dataset
+    for url in df['href']:
+        featurizer.url = url
+        features = featurizer.run()
+        X.append(features)
+
+    # Convert features to a DataFrame
+    X = pd.DataFrame(X)
+
+    # Extract labels from the dataset
     y = df['is_exhibition']
 
-    # Feature extraction and transformation
-    vectorizer = CountVectorizer()
-    X_transformed = vectorizer.fit_transform(X)
+    # Split the dataset into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Train the logistic regression model
-    model = LogisticRegression()
-    model.fit(X_transformed, y)
+    # Initialize and train a Logistic Regression model
+    lr_model = LogisticRegression()
+    lr_model.fit(X_train, y_train)
 
-    # Save the model and vectorizer
+    # Predict on the testing set
+    y_pred = lr_model.predict(X_test)
+
+    # Evaluate the model
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Accuracy:", accuracy)
+    print("Classification Report:")
+    print(classification_report(y_test, y_pred))
+
+    # Save the model and featurizer
     model_dir = 'models'
     os.makedirs(model_dir, exist_ok=True)
     model_path = os.path.join(model_dir, 'logistic_regression_model.pkl')
-    vectorizer_path = os.path.join(model_dir, 'count_vectorizer.pkl')
-    joblib.dump(model, model_path)
-    joblib.dump(vectorizer, vectorizer_path)
-    print("Model and vectorizer saved successfully!")
-
-    return model, vectorizer
+    featurizer_path = os.path.join(model_dir, 'featurizer.pkl')
+    joblib.dump(lr_model, model_path)
+    joblib.dump(featurizer, featurizer_path)
+    print("Model and featurizer saved!")
 
 
-def predict_url(model, vectorizer, url):
-    # Transform the URL using the same vectorizer used during training
-    url_transformed = vectorizer.transform([url])
 
-    # Predict using the trained model
-    prediction = model.predict(url_transformed)
+def predict_url(model, featurizer, url):
+    # Initialize the UrlFeaturizer with the new URL
+    featurizer.url = url
 
-    return prediction[0]  # Assuming only one prediction is made
+    # Extract features for the new URL
+    features = featurizer.run()
+
+    # Convert the features dictionary into a 2D array
+    X = []
+    for value in features.values():
+        X.append(value)
+    X = [X]  # Convert to a list of lists
+
+    # Make prediction using the trained model
+    prediction = model.predict(X)
+
+    # Return the predicted class (0 or 1)
+    return prediction[0]
 
 
 def load_model():
     model = joblib.load(r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\models\logistic_regression_model.pkl')
-    vectorizer = joblib.load(r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\models\count_vectorizer.pkl')
-    print("Model and vectorizer loaded successfully!")
-    return model, vectorizer
+    featurizer = UrlFeaturizer("")
+    print("Model and featurizer loaded successfully!")
+    return model, featurizer
 
 
 # Example usage
 def main():
-
-    foobar = UrlFeaturizer('https://www.southbankcentre.co.uk/whats-on/art-exhibitions/when-forms-come-alive?eventId=967958')
-    print(foobar.run())
-
     # Paths
     csv_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\training_data\exhibition_href_training.csv'
 
-    # Train the model and save
-    model, vectorizer = train_logistic_regression_model(csv_path)
+    train_logistical_regression_model(csv_path)
 
-    # Load the model
-    loaded_model, loaded_vectorizer = load_model()
+    model, featurizer = load_model()
 
-    # URL to predict
-    url_to_predict = "https://www.southbankcentre.co.uk/whats-on/art-exhibitions/when-forms-come-alive?eventId=973233"
+    url_to_predict = 'https://www.barbican.org.uk/whats-on/2024/event/this-exhibition'
+    print(predict_url(model, featurizer, url_to_predict))
 
-    # Predict
-    prediction = predict_url(loaded_model, loaded_vectorizer, url_to_predict)
+    url_to_predict = 'https://www.barbican.org.uk/whats-on/past/event/this-exhibition'
+    print(predict_url(model, featurizer, url_to_predict))
 
-    if prediction:
-        print("The URL is predicted to be that of an exhibition.")
-    else:
-        print("The URL is predicted not to be that of an exhibition.")
+    url_to_predict = 'https://www.barbican.org.uk/about'
+    print(predict_url(model, featurizer, url_to_predict))
 
 
 if __name__ == "__main__":
