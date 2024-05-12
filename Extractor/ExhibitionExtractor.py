@@ -1,12 +1,12 @@
 import WebScraping.GalleryScraper as scraper
-import ML.LogisticalRegression as lr
+import ML.RandomForrest as rf
 def get_exhibition_urls(url):
 
     site_hrefs = scraper.scrape_hrefs(url)
     exhibitions = []
 
     for href in site_hrefs:
-        is_exhibition = lr.predict_url(href)
+        is_exhibition = rf.predict_url(href)
         if is_exhibition:
             exhibitions.append(href)
 
@@ -26,10 +26,10 @@ def test():
         'https://www.tate.org.uk/whats-on?event_type=exhibition',
         'https://www.barbican.org.uk/whats-on/art-design',
         'https://www.saatchigallery.com/whats-on',
-        #'https://www.somersethouse.org.uk/whats-on',
-        #'https://www.npg.org.uk/whatson/events-calendar',
-        #'https://www.dulwichpicturegallery.org.uk/whats-on/exhibitions/',
-        #'https://camdenartcentre.org/whats-on/in-the-building/exhibitions'
+        'https://www.somersethouse.org.uk/whats-on',
+        'https://www.npg.org.uk/whatson/events-calendar',
+        'https://www.dulwichpicturegallery.org.uk/whats-on/exhibitions/',
+        'https://camdenartcentre.org/whats-on/in-the-building/exhibitions'
 
     ]
 
