@@ -1,15 +1,19 @@
-#from selenium.webdriver.chrome.service import Service as ChromeService
-#from webdriver_manager.chrome import ChromeDriverManager
+# from selenium.webdriver.chrome.service import Service as ChromeService
+# from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
+import re
 
-#TODO refactor such that driver is loaded once
+
+# TODO refactor such that driver is loaded once
 def load_chrome_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')  # Run in headless mode (without opening browser window)
-    driver = webdriver.Chrome(options=options) # Include this as a param if driver not installed: service=ChromeService(ChromeDriverManager().install())
+    driver = webdriver.Chrome(
+        options=options)  # Include this as a param if driver not installed: service=ChromeService(ChromeDriverManager().install())
     return driver
+
 
 def fetch_html_content(url, driver):
     driver.get(url)
@@ -18,6 +22,7 @@ def fetch_html_content(url, driver):
     driver.quit()
     return html_content
 
+
 def parse_html(html_content):
     try:
         soup = BeautifulSoup(html_content, 'html.parser')
@@ -25,6 +30,7 @@ def parse_html(html_content):
     except Exception as e:
         print("Error parsing HTML:", str(e))
         return None
+
 
 def scrape_hrefs(url):
     driver = load_chrome_driver()
@@ -49,7 +55,8 @@ def scrape_hrefs(url):
             for link in soup.find_all('a'):
                 href = link.get('href')
                 if href:
-                    if href.startswith("http://") or href.startswith("https://") or href.startswith("www.") or (href.startswith("//") and href.split("//",1)[1].startswith(base_url)):
+                    if href.startswith("http://") or href.startswith("https://") or href.startswith("www.") or (
+                            href.startswith("//") and href.split("//", 1)[1].startswith(base_url)):
                         hrefs.append(href)
                     else:
                         if href.startswith("/"):
@@ -63,22 +70,54 @@ def scrape_hrefs(url):
     return None
 
 
-
-
-
-
-
 def get_exhibition_listing():
     # This function will locate the page which contains all exhibition listings
     return -1
+
 
 def get_exhibition_urls():
     # This function will extract all exhibition urls from the exhibition listing
     return -1
 
-def scrape_exhibition_details():
-    # This function extract all info from the individual exhibition page
-    return -1
+
+def scrape_exhibition_details(url):
+    driver = load_chrome_driver()
+    html_content = fetch_html_content(url, driver)
+    soup = parse_html(html_content)
+
+    def getTitle():
+        # get h1 element
+        title = soup.find('h1').text
+        return title
+
+    def getBio():
+        # not sure how to do
+        return -1
+
+    def getPrice():
+        # search for £ symbol else free keyword - split by terms like adult or concession if nessacary
+        # Find all occurrences of text containing the keyword "free"
+        free_occurrences = soup.find_all(text=re.compile(r'\bfree\b', re.IGNORECASE))
+
+        # Find all occurrences of text containing the pound (£) symbol and their associated prices
+        price_matches = soup.find_all(text=re.compile(r'£\s*\d+(\.\d+)?'))
+
+        # Print the results
+        print("Occurrences containing the keyword 'free':")
+        for occurrence in free_occurrences:
+            print(occurrence.strip())
+
+        print("\nPrices associated with the pound (£) symbol:")
+        for match in price_matches:
+            print(match.strip())
+        return -1
+
+    def getImages():
+        # get the largest image in main
+        return -1
+
+    return getTitle()
+
 
 # Example usage
 def main():

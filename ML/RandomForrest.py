@@ -5,11 +5,9 @@ import joblib
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 from ML.UrlFeaturizer import UrlFeaturizer
-import numpy as np
-import matplotlib.pyplot as plt
+
 
 # TODO refactor so loads only occur once
-# TODO adjust features to improve performance
 
 def train_random_forest_model(csv_path):
     # Load the dataset
@@ -21,7 +19,6 @@ def train_random_forest_model(csv_path):
     # Extract features using the UrlFeaturizer for each URL in the dataset
     for url in df['href']:
         featurizer = UrlFeaturizer(url)
-        featurizer.path = url
         features = featurizer.run()
         X.append(features)
 
@@ -61,6 +58,7 @@ def train_random_forest_model(csv_path):
     print("Feature Importance:")
     for i, importance in enumerate(rf_model.feature_importances_):
         print(f"{feature_names[i]}: {importance}")
+
 
 def predict_url(url):
     # Load the model and featurizer with feature names

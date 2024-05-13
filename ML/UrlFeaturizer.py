@@ -1,12 +1,13 @@
-#reference: https://towardsdatascience.com/predicting-the-maliciousness-of-urls-24e12067be5
+'''
+reference: https://towardsdatascience.com/predicting-the-maliciousness-of-urls-24e12067be5
+'''
 
 import json
 import re
-
+url_dict_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\url_dict.json'
 class UrlFeaturizer(object):
     def __init__(self, url):
         self.base_url, self.path = self.extractPath(url)
-
 
     def extractPath(self, url):
         # Remove protocol and www subdomain if present
@@ -45,7 +46,10 @@ class UrlFeaturizer(object):
         pattern = r'/\d{4}/'
         return bool(re.search(pattern, self.path))
 
-    def urlID(self, file_path='url_dict.json'):
+    def numberOfPathElements(self):
+        return self.path.count('/')
+
+    def urlID(self, file_path=url_dict_path):
         base_url = self.base_url
 
         try:
@@ -79,6 +83,7 @@ class UrlFeaturizer(object):
         data['containsYear'] = self.containsYear()
         data['containsYearInPath'] = self.containsYearInPath()
         data['baseUrlID'] = self.urlID()
+        data['numOfPathElements'] = self.numberOfPathElements()
         return data
 
 def main():

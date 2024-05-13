@@ -6,8 +6,9 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 from ML.UrlFeaturizer import UrlFeaturizer
 
-#TODO refactor so loads only occur once
-#TODO adjust features to improve performance
+
+# TODO refactor so loads only occur once
+# TODO adjust features to improve performance
 
 def train_logistical_regression_model(csv_path):
     # Load the dataset
@@ -17,7 +18,6 @@ def train_logistical_regression_model(csv_path):
     X = []
 
     # Initialize the UrlFeaturizer
-
 
     # Extract features using the UrlFeaturizer for each URL in the dataset
     for url in df['href']:
@@ -111,4 +111,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
