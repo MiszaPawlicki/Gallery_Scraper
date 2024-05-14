@@ -4,7 +4,10 @@ reference: https://towardsdatascience.com/predicting-the-maliciousness-of-urls-2
 
 import json
 import re
+
 url_dict_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\url_dict.json'
+
+
 class UrlFeaturizer(object):
     def __init__(self, url):
         self.base_url, self.path = self.extractPath(url)
@@ -75,16 +78,18 @@ class UrlFeaturizer(object):
             return new_url_id
 
     def run(self):
-        data = {}
-        data['containsWhatsOnKeyword'] = self.containsWhatsOnKeyword()
-        data['containsExhibitionKeyword'] = self.containsExhibitionKeyword()
-        data['containsEventKeyword'] = self.containsEventKeyword()
-        data['containsPastKeyword'] = self.containsPastKeyword()
-        data['containsYear'] = self.containsYear()
-        data['containsYearInPath'] = self.containsYearInPath()
-        data['baseUrlID'] = self.urlID()
-        data['numOfPathElements'] = self.numberOfPathElements()
+        data = {
+            'containsWhatsOnKeyword': self.containsWhatsOnKeyword(),
+            'containsExhibitionKeyword': self.containsExhibitionKeyword(),
+            'containsEventKeyword': self.containsEventKeyword(),
+            'containsPastKeyword': self.containsPastKeyword(),
+            'containsYear': self.containsYear(),
+            'containsYearInPath': self.containsYearInPath(),
+            'baseUrlID': self.urlID(),
+            'numOfPathElements': self.numberOfPathElements()
+        }
         return data
+
 
 def main():
     featurizer = UrlFeaturizer('https://www.lissongallery.com/exhibitions/year/2009')
@@ -92,6 +97,7 @@ def main():
     print(featurizer.run())
     print(featurizer.base_url)
     print(featurizer.path)
+
 
 if __name__ == "__main__":
     main()

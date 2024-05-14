@@ -116,6 +116,11 @@ def scrape_exhibition_details(url):
         # get the largest image in main
         return -1
 
+    def getLocation():
+        # could use entity recognition, could pull postcodes, not an obvious way to do this, could default to gallery
+        # location based on base url and some hardcoded value
+        return -1
+
     return getTitle()
 
 

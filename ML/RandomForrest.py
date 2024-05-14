@@ -1,11 +1,12 @@
 import os
 import pandas as pd
+from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
-import joblib
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
+from sklearn.tree import plot_tree
 from ML.UrlFeaturizer import UrlFeaturizer
-
+import joblib
 
 # TODO refactor so loads only occur once
 
@@ -58,6 +59,12 @@ def train_random_forest_model(csv_path):
     print("Feature Importance:")
     for i, importance in enumerate(rf_model.feature_importances_):
         print(f"{feature_names[i]}: {importance}")
+
+        # Visualize the first tree
+    plt.figure(figsize=(20, 10))
+    plot_tree(rf_model.estimators_[0], filled=True, feature_names=feature_names,
+              class_names=['not exhibition', 'exhibition'])
+    plt.show()
 
 
 def predict_url(url):
