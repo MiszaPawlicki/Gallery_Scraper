@@ -4,9 +4,12 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 import re
+import WebScraping.GalleryScraper as scraper
+import ML.RandomForrest as rf
 
 
 # TODO refactor such that driver is loaded once
+# TODO refactor to separate NLP from web scraping, this would be best practise
 def load_chrome_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')  # Run in headless mode (without opening browser window)
@@ -75,9 +78,17 @@ def get_exhibition_listing():
     return -1
 
 
-def get_exhibition_urls():
-    # This function will extract all exhibition urls from the exhibition listing
-    return -1
+def get_exhibition_urls(whats_on_url):
+    site_hrefs = scraper.scrape_hrefs(whats_on_url)
+    exhibitions = []
+
+    for href in site_hrefs:
+        is_exhibition = rf.predict_url(href)
+        if is_exhibition:
+            exhibitions.append(href)
+
+    unique_exhibitions = list(set(exhibitions))
+    return unique_exhibitions
 
 
 def scrape_exhibition_details(url):
@@ -86,53 +97,123 @@ def scrape_exhibition_details(url):
     soup = parse_html(html_content)
 
     def getTitle():
-        # get h1 element
-        title = soup.find('h1').text
-        return title
+        # Find the <h1> element
+        title_element = soup.find('h1')
+
+        if title_element:
+            # Extract the text of the <h1> element
+            title = title_element.text
+
+            # Replace escape characters with spaces
+            title = title.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ')
+
+            return title.strip()
+        else:
+            return None
 
     def getBio():
         # not sure how to do
         return -1
 
     def getPrice():
-        # search for £ symbol else free keyword - split by terms like adult or concession if nessacary
-        # Find all occurrences of text containing the keyword "free"
-        free_occurrences = soup.find_all(text=re.compile(r'\bfree\b', re.IGNORECASE))
+        # TODO This is still pulling prices for things such as memberships, need to find way to ignore
 
-        # Find all occurrences of text containing the pound (£) symbol and their associated prices
-        price_matches = soup.find_all(text=re.compile(r'£\s*\d+(\.\d+)?'))
+        # Find the main content area
+        main_content = soup.find('main')
+        if not main_content:
+            # If no <main> tag is found, fall back to a div with class 'main' or 'content'
+            main_content = soup.find('div', class_=re.compile(r'main|content', re.IGNORECASE))
 
-        # Print the results
-        print("Occurrences containing the keyword 'free':")
-        for occurrence in free_occurrences:
-            print(occurrence.strip())
+        if not main_content:
+            return 'Not listed', 'Not listed'
 
-        print("\nPrices associated with the pound (£) symbol:")
-        for match in price_matches:
-            print(match.strip())
-        return -1
+        # Find all elements within the main content area with class names containing 'price'
+        price_elements = main_content.find_all(class_=re.compile(r'price', re.IGNORECASE))
+
+        # Extract numerical values from price elements
+        prices = []
+        free_occurrences = []
+
+        for element in price_elements:
+            text = element.get_text(strip=True)
+
+            # Check for "free" keyword
+            if re.search(r'\bfree\b', text, re.IGNORECASE):
+                free_occurrences.append(text)
+
+            # Find prices following the pound symbol
+            price_matches = re.findall(r'£\s*(\d+(\.\d+)?)', text)
+            for price in price_matches:
+                try:
+                    prices.append(float(price[0]))  # price[0] because re.findall returns tuples
+                except ValueError:
+                    continue
+
+        # Determine minimum and maximum prices
+        if free_occurrences and not prices:
+            min_price = 'free'
+            max_price = 'free'
+        elif prices:
+            min_price = min(prices) if not free_occurrences else 'free'
+            max_price = max(prices)
+        else:
+            min_price = 'Not listed'
+            max_price = 'Not listed'
+
+        return min_price, max_price
 
     def getImages():
-        # get the largest image in main
-        return -1
+        # TODO this is flakey, should have additional checks
+
+        # Find the <main> tag
+        main_content = soup.find('main')
+
+        if main_content:
+            # Find the first image tag within the <main> content
+            first_image = main_content.find('img')
+
+            # Extract the src attribute of the first image
+            if first_image:
+                return first_image.get('src')
+            else:
+                return None
+        else:
+            return None
 
     def getLocation():
-        # could use entity recognition, could pull postcodes, not an obvious way to do this, could default to gallery
-        # location based on base url and some hardcoded value
-        return -1
+        # TODO this is fine as a placeholder but it should really check for elements under the header of location first
 
-    return getTitle()
+        # Find elements containing potential postcode information based on common patterns
+        postcode_elements = soup.find_all(['div', 'span', 'p'])
+
+        for element in postcode_elements:
+            text = element.get_text().strip()
+
+            # Regular expression pattern to match UK postcodes in various formats
+            postcode_pattern = r'[A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2}'
+
+            # Find the first match of postcode pattern in the text
+            postcode_match = re.search(postcode_pattern, text)
+            if postcode_match:
+                return postcode_match.group()
+
+        return None
+
+    return {'Title': getTitle(), 'Bio': getBio(), 'Price': getPrice(), 'Images': getImages(), 'Location': getLocation()}
+
+
+def get_all_exhibition_details(whats_on_url):
+    # this function will eventually return all exhibition details
+    exhibition_urls = get_exhibition_urls(whats_on_url)
+    for url in exhibition_urls:
+        details = scrape_exhibition_details(url)
+        print(url)
+        print(str(details) + '\n')
 
 
 # Example usage
 def main():
-    # Test the scrape_hrefs function
-    url = 'https://example.com'
-    hrefs = scrape_hrefs(url)
-    if hrefs:
-        print(hrefs)
-    else:
-        print("No hrefs found.")
+    get_all_exhibition_details('https://www.southbankcentre.co.uk/whats-on?type=art-exhibitions')
 
 
 if __name__ == "__main__":

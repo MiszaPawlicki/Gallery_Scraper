@@ -9,6 +9,7 @@ from ML.UrlFeaturizer import UrlFeaturizer
 import joblib
 
 # TODO refactor so loads only occur once
+# TODO Model performance needs to be improved, precision needs to be as high as possible whilst maintaining high-ish recall
 
 def train_random_forest_model(csv_path):
     # Load the dataset
