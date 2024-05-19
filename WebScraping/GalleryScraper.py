@@ -4,12 +4,12 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 import re
+import NLP
 import WebScraping.GalleryScraper as scraper
 import ML.RandomForrest as rf
 
 
 # TODO refactor such that driver is loaded once
-# TODO refactor to separate NLP from web scraping, this would be best practise
 def load_chrome_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')  # Run in headless mode (without opening browser window)
@@ -130,35 +130,8 @@ def scrape_exhibition_details(url):
         # Find all elements within the main content area with class names containing 'price'
         price_elements = main_content.find_all(class_=re.compile(r'price', re.IGNORECASE))
 
-        # Extract numerical values from price elements
-        prices = []
-        free_occurrences = []
-
-        for element in price_elements:
-            text = element.get_text(strip=True)
-
-            # Check for "free" keyword
-            if re.search(r'\bfree\b', text, re.IGNORECASE):
-                free_occurrences.append(text)
-
-            # Find prices following the pound symbol
-            price_matches = re.findall(r'£\s*(\d+(\.\d+)?)', text)
-            for price in price_matches:
-                try:
-                    prices.append(float(price[0]))  # price[0] because re.findall returns tuples
-                except ValueError:
-                    continue
-
-        # Determine minimum and maximum prices
-        if free_occurrences and not prices:
-            min_price = 'free'
-            max_price = 'free'
-        elif prices:
-            min_price = min(prices) if not free_occurrences else 'free'
-            max_price = max(prices)
-        else:
-            min_price = 'Not listed'
-            max_price = 'Not listed'
+        # Using NLP, find price of the exhibition
+        min_price, max_price = NLP.findPrices(price_elements)
 
         return min_price, max_price
 
@@ -186,20 +159,18 @@ def scrape_exhibition_details(url):
         # Find elements containing potential postcode information based on common patterns
         postcode_elements = soup.find_all(['div', 'span', 'p'])
 
-        for element in postcode_elements:
-            text = element.get_text().strip()
+        # Using NLP, find strings that match postcode REGEX
+        postcodes = NLP.findLocations(postcode_elements)
 
-            # Regular expression pattern to match UK postcodes in various formats
-            postcode_pattern = r'[A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2}'
+        return postcodes
 
-            # Find the first match of postcode pattern in the text
-            postcode_match = re.search(postcode_pattern, text)
-            if postcode_match:
-                return postcode_match.group()
-
-        return None
-
-    return {'Title': getTitle(), 'Bio': getBio(), 'Price': getPrice(), 'Images': getImages(), 'Location': getLocation()}
+    return {
+        'Title': getTitle(),
+        'Bio': getBio(),
+        'Price': getPrice(),
+        'Images': getImages(),
+        'Location': getLocation()
+    }
 
 
 def get_all_exhibition_details(whats_on_url):
