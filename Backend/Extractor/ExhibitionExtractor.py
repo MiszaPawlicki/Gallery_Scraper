@@ -1,5 +1,5 @@
 import Backend.WebScraping.GalleryScraper as scraper
-import ML.RandomForrest as rf
+import Backend.ML.RandomForrest as rf
 
 
 def get_exhibition_urls(url):
@@ -16,31 +16,22 @@ def get_exhibition_urls(url):
     return unique_exhibitions
 
 
-def scrape_exhibition_details():
-    # This function extract all info from the individual exhibition page
+def scrape_exhibition_details(url):
+    found_exhibitions = get_exhibition_urls(url)
+    exhibition_list = []
+    if found_exhibitions:
+        for e in found_exhibitions:
+            print(e)
+            exhibition_list.append(e)
+
+    if exhibition_list:
+        return exhibition_list
+
     return -1
 
-
-def test():
-    exhibitions = [
-        'https://www.southbankcentre.co.uk/whats-on?type=art-exhibitions',
-        # 'https://www.lissongallery.com/exhibitions',
-        # 'https://www.tate.org.uk/whats-on?event_type=exhibition',
-        # 'https://www.barbican.org.uk/whats-on/art-design',
-        # 'https://www.saatchigallery.com/whats-on',
-        # 'https://www.somersethouse.org.uk/whats-on',
-        # 'https://www.npg.org.uk/whatson/events-calendar',
-        # 'https://www.dulwichpicturegallery.org.uk/whats-on/exhibitions/',
-        # 'https://camdenartcentre.org/whats-on/in-the-building/exhibitions'
-
-    ]
-
-    for url in exhibitions:
-        print('url: ' + url)
-        found_exhibitions = get_exhibition_urls(url)
-        if found_exhibitions:
-            for e in found_exhibitions:
-                print(e)
+def main():
+    scrape_exhibition_details('https://www.southbankcentre.co.uk/whats-on?type=art-exhibitions')
 
 
-test()
+if __name__ == "__main__":
+    main()

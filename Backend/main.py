@@ -1,6 +1,28 @@
-import WebScraping.GalleryScraper as gs
+import Extractor.ExhibitionExtractor as extractor
+import WebScraping.GalleryScraper as scraper
+import Database.Database as db
 
-#print(gs.scrape_exhibition_details('https://www.lissongallery.com/exhibitions/laure-prouvost-4fd32158-92b3-42be-be66-9f4e67dabafb'))
-#print(gs.scrape_exhibition_details('https://www.southbankcentre.co.uk/whats-on/gigs/futuretense-k-s-r-osquello?eventId=976171'))
-print(gs.scrape_exhibition_details('https://www.southbankcentre.co.uk/whats-on/art-exhibitions/tavares-strachan-there-light-somewhere?eventId=975939'))
-#print(gs.scrape_exhibition_details('https://www.tate.org.uk/whats-on/tate-modern/expressionists'))
+# 'https://www.southbankcentre.co.uk/whats-on?type=art-exhibitions',
+# 'https://www.lissongallery.com/exhibitions',
+# 'https://www.tate.org.uk/whats-on?event_type=exhibition',
+# 'https://www.barbican.org.uk/whats-on/art-design',
+# 'https://www.saatchigallery.com/whats-on',
+# 'https://www.somersethouse.org.uk/whats-on',
+# 'https://www.npg.org.uk/whatson/events-calendar',
+# 'https://www.dulwichpicturegallery.org.uk/whats-on/exhibitions/',
+# 'https://camdenartcentre.org/whats-on/in-the-building/exhibitions'
+
+url = 'https://www.dulwichpicturegallery.org.uk/whats-on/exhibitions/'
+galleries = extractor.scrape_exhibition_details(url)
+
+gallery_details = []
+
+db.create_table()
+
+for gallery_url in galleries:
+    details = scraper.scrape_exhibition_details(gallery_url)
+    if details:
+        print(details)
+
+        db.insert_exhibition(details)
+

@@ -111,11 +111,11 @@ def scrape_exhibition_details(url):
         else:
             return None
 
-    def getBio():
+    def getDescription():
         # not sure how to do
         return -1
 
-    def getPrice():
+    def getPrices():
         # TODO This is still pulling prices for things such as memberships, need to find way to ignore
 
         # Find the main content area
@@ -135,8 +135,9 @@ def scrape_exhibition_details(url):
 
         return min_price, max_price
 
-    def getImages():
-        # TODO this is flakey, should have additional checks
+    def getImage():
+        # TODO need to find more concrete way of discerning main image
+        # TODO needs to append base url if just a path
 
         # Find the <main> tag
         main_content = soup.find('main')
@@ -164,12 +165,17 @@ def scrape_exhibition_details(url):
 
         return postcodes
 
+    # refactor, this is ugly
+    min_price, max_price = getPrices()
+
     return {
-        'Title': getTitle(),
-        'Bio': getBio(),
-        'Price': getPrice(),
-        'Images': getImages(),
-        'Location': getLocation()
+        'url': url,
+        'title': getTitle(),
+        'description': getDescription(),
+        'min_price': min_price,
+        'max_price': max_price,
+        'image': getImage(),
+        'location': getLocation()
     }
 
 
