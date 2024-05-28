@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
-from ML.UrlFeaturizer import UrlFeaturizer
+from Backend.ML.UrlFeaturizer import UrlFeaturizer
 
 
 # TODO refactor so loads only occur once
@@ -61,8 +61,8 @@ def train_logistical_regression_model(csv_path):
 
 def predict_url(url):
     # Load the model and featurizer with feature names
-    model_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\models\logistic_regression_model.pkl'
-    featurizer_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\models\featurizer.pkl'
+    model_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\Backend\ML\models\logistic_regression_model.pkl'
+    featurizer_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\Backend\ML\models\featurizer.pkl'
     with open(featurizer_path, 'rb') as f:
         featurizer, feature_names = joblib.load(f)
 
@@ -91,7 +91,7 @@ def predict_url(url):
 # Example usage
 def main():
     # Paths
-    csv_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\training_data\exhibition_href_training.csv'
+    csv_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\Backend\ML\training_data\exhibition_href_training.csv'
 
     # Train the model
     train_logistical_regression_model(csv_path)
