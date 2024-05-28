@@ -4,9 +4,9 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 import re
-import NLP
-import WebScraping.GalleryScraper as scraper
-import ML.RandomForrest as rf
+from Backend import NLP
+import Backend.WebScraping.GalleryScraper as scraper
+import Backend.ML.RandomForrest as rf
 
 
 # TODO refactor such that driver is loaded once

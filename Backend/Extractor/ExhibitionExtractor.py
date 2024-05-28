@@ -1,4 +1,4 @@
-import WebScraping.GalleryScraper as scraper
+import Backend.WebScraping.GalleryScraper as scraper
 import ML.RandomForrest as rf
 
 

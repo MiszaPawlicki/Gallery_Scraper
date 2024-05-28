@@ -5,7 +5,7 @@ reference: https://towardsdatascience.com/predicting-the-maliciousness-of-urls-2
 import json
 import re
 
-url_dict_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\url_dict.json'
+url_dict_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\Backend\ML\url_dict.json'
 
 
 class UrlFeaturizer(object):
