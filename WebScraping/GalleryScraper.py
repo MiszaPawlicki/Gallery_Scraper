@@ -165,6 +165,52 @@ def scrape_exhibition_details(url):
 
         return postcodes
 
+
+
+    def getDate():
+        # Search in the main content first
+        main_tag = soup.find('main')
+        if main_tag:
+            date_text = search_for_date_in_tag(main_tag)
+            if date_text:
+                return date_text
+
+        # If not found, search in the rest of the body
+        body_tag = soup.find('body')
+        if body_tag:
+            date_text = search_for_date_in_tag(body_tag)
+            if date_text:
+                return date_text
+
+        # If still not found, return None
+        return None
+
+    def search_for_date_in_tag(tag):
+        # List of tags to search for dates
+        tags_to_search = ['p', 'div', 'span', 'h2', 'h3', 'h4', 'h5', 'h6', 'time']
+        date_pattern = re.compile(
+            r'\b(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(?:day)?)?\s*'  # Optional day name
+            r'(\d{1,2})(?:st|nd|rd|th)?\s*'  # Day with optional ordinal suffix
+            r'(?:(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?:uary|ch|il|e|y|ust|tember|ober|ember)?)\s*'  # Month
+            r'(\d{4})?\b'  # Optional year
+            r'(?:\s*[-–—]\s*'  # Date range separator: hyphen, en dash, or em dash
+            r'(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(?:day)?)?\s*'  # Optional second day name
+            r'(\d{1,2})(?:st|nd|rd|th)?\s*'  # Second day with optional ordinal suffix
+            r'(?:(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?:uary|ch|il|e|y|ust|tember|ober|ember)?)\s*'  # Second month
+            r'(\d{4})?)?'  # Optional second year
+            , re.IGNORECASE)
+
+        # Iterate through specified tags and search for dates
+        for tag_name in tags_to_search:
+            for element in tag.find_all(tag_name):
+                text = element.get_text(strip=True)
+                if date_pattern.search(text):
+                    return text
+
+        return None
+
+    def getGallery():
+        return -1;
     # refactor, this is ugly
     min_price, max_price = getPrices()
 
