@@ -1,5 +1,5 @@
 import WebScraping.GalleryScraper as scraper
-import ML.RandomForrest as rf
+import ML.DecisionTree as dt
 
 
 def get_exhibition_urls(url):
@@ -7,7 +7,7 @@ def get_exhibition_urls(url):
     exhibitions = []
 
     for href in site_hrefs:
-        is_exhibition = rf.predict_url(href)
+        is_exhibition = dt.predict_url(href)
         if is_exhibition:
             exhibitions.append(href)
 

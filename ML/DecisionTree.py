@@ -98,6 +98,7 @@ def train_and_test_decision_tree_model(csv_path):
 
     return trees, performances
 
+
 def predict_url(url):
     # Load the model and featurizer with feature names
     model_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\models\decision_tree_models.pkl'
@@ -106,7 +107,7 @@ def predict_url(url):
         featurizer, feature_names = joblib.load(f)
 
     # Initialize the UrlFeaturizer with the new URL
-    featurizer.path = url
+    featurizer = UrlFeaturizer(url)
 
     # Extract features for the new URL
     features = featurizer.run()
@@ -133,31 +134,36 @@ def predict_url(url):
 
     return prediction[0]
 
+
+
 # Example usage
 def main():
     # Paths
     csv_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\training_data\exhibition_href_training.csv'
 
     # Train the model
-    trees, performances = train_and_test_decision_tree_model(csv_path)
+    train_and_test_decision_tree_model(csv_path)
 
-    # Print overall performance
-    print("\nOverall Performance by baseUrlID:")
-    for baseUrlID, accuracy in performances.items():
-        print(f"baseUrlID {baseUrlID}: Accuracy = {accuracy:.2f}")
-
-    # Example URL predictions
     exhibition_urls = [
-        'https://www.barbican.org.uk/whats-on/2024/event/this-exhibition',
+        'https://www.southbankcentre.co.uk/whats-on/art-exhibitions/secondary-schools-morning-tavares-strachan?eventId=985129',
         'https://www.lissongallery.com/exhibitions/otobong-nkanga',
-        'https://www.southbankcentre.co.uk/whats-on/art-exhibitions/secondary-schools-morning-tavares-strachan?eventId=985129'
+        'https://www.tate.org.uk/whats-on/tate-britain/sargent-and-fashion',
+        'https://www.barbican.org.uk/whats-on/2024/event/this-exhibition',
+        'https://www.saatchigallery.com/exhibition/glenmorangie-x-azuma-makoto',
+        'https://www.somersethouse.org.uk/whats-on/studio-01-2024',
+        'https://www.npg.org.uk/whatson/exhibitions/2024/six-lives',
+        'https://www.dulwichpicturegallery.org.uk/whats-on/exhibitions/2024/november/tirzah-garwood-beyond-ravilious/'
     ]
 
     non_exhibition_urls = [
+        'https://www.southbankcentre.co.uk/whats-on',
+        'https://www.lissongallery.com/exhibitions/year/2017',
+        'https://www.tate.org.uk/visit',
         'https://www.barbican.org.uk/whats-on/past/event/this-exhibition',
-        'https://www.barbican.org.uk/about',
-        'https://www.southbankcentre.co.uk/',
-        'https://www.southbankcentre.co.uk/whats-on'
+        'https://www.saatchigallery.com/whats-on/upcoming',
+        'https://www.somersethouse.org.uk/whats-on/somerset-house-summer-series/pip-millett',
+        'https://www.npg.org.uk/whatson/event-root/portrait-of-the-day-talks-2',
+        'https://www.dulwichpicturegallery.org.uk/whats-on/displays/2024/march/oracles'
     ]
 
     print('\nExhibition URLs:')

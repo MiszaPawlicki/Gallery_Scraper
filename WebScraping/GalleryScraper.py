@@ -1,12 +1,14 @@
 # from selenium.webdriver.chrome.service import Service as ChromeService
 # from webdriver_manager.chrome import ChromeDriverManager
+from urllib.parse import urlparse
+
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 import re
 import NLP
 import WebScraping.GalleryScraper as scraper
-import ML.RandomForrest as rf
+import ML.DecisionTree as dt
 
 
 # TODO refactor such that driver is loaded once
@@ -83,7 +85,7 @@ def get_exhibition_urls(whats_on_url):
     exhibitions = []
 
     for href in site_hrefs:
-        is_exhibition = rf.predict_url(href)
+        is_exhibition = dt.predict_url(href)
         if is_exhibition:
             exhibitions.append(href)
 
@@ -135,9 +137,12 @@ def scrape_exhibition_details(url):
 
         return min_price, max_price
 
+    from urllib.parse import urljoin
+
     def getImage():
-        # TODO need to find more concrete way of discerning main image
-        # TODO needs to append base url if just a path
+        # Define the base URL
+        parsed_url = urlparse(url)
+        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
 
         # Find the <main> tag
         main_content = soup.find('main')
@@ -148,7 +153,13 @@ def scrape_exhibition_details(url):
 
             # Extract the src attribute of the first image
             if first_image:
-                return first_image.get('src')
+                src = first_image.get('src')
+                # Append base URL if src is a relative path
+                if src:
+                    # Use urljoin to handle both absolute and relative paths
+                    return urljoin(base_url, src)
+                else:
+                    return None
             else:
                 return None
         else:

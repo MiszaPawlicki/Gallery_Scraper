@@ -1,5 +1,9 @@
 import json
 import re
+import logging
+
+# Configure logging
+logging.basicConfig(filename='url_classification.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 
 url_dict_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\url_dict.json'
 
@@ -15,7 +19,7 @@ class UrlFeaturizer:
         return base_url, path
 
     def containsWhatsOnKeyword(self):
-        keywords = ['/whats-on']
+        keywords = ['/whats-on', '/whatson']
         return any(keyword in self.path.lower() for keyword in keywords)
 
     def containsExhibitionKeyword(self):
@@ -39,11 +43,9 @@ class UrlFeaturizer:
         pattern = r'/\d{4}/'
         return bool(re.search(pattern, self.path))
 
-    def numberOfPathElements(self):
-        return self.path.count('/')
-
     def urlID(self, file_path=url_dict_path):
         base_url = self.base_url
+
         try:
             with open(file_path, 'r') as file:
                 url_dict = json.load(file)
@@ -69,6 +71,6 @@ class UrlFeaturizer:
             'containsYear': self.containsYear(),
             'containsYearInPath': self.containsYearInPath(),
             'baseUrlID': self.urlID(),
-            'numOfPathElements': self.numberOfPathElements()
         }
+        logging.debug(f"Features for URL {self.path}: {data}")
         return data
