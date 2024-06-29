@@ -1,0 +1,18 @@
+{
+  "https://www.southbankcentre.co.uk": {
+    "title": "h1",
+    "description": ".text-with-heading__text",
+    "price": ".arrangement__details__table__price",
+    "image": "#root > div > div > div.layout > main > section > section.arrangement__hero.arrangement__hero--square > div > div.arrangement__hero__media-wrapper > div > div > figure > img",
+    "date": ".arrangement__details__col",
+    "location": ".location-selector"
+  },
+  "https://www.tate.org.uk": {
+    "title": "h1",
+    "description": "#content > article > section > div.container.container--primary-content > div > div > div.grid-col--66 > div.content__body-text > div > div > div.block-rich_text",
+    "price": ".price",
+    "image": "#content > article > header > div > div > div.splash-main > div.splash-header__media > div > picture > img",
+    "date": ".content-block--dates__item",
+    "location": ".location"
+  }
+}

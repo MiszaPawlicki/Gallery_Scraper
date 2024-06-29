@@ -1,9 +1,9 @@
 import json
-import re
 import logging
+import re
 
 # Configure logging
-logging.basicConfig(filename='url_classification.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
+#logging.basicConfig(filename='url_classification.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 
 url_dict_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\url_dict.json'
 
@@ -72,5 +72,5 @@ class UrlFeaturizer:
             'containsYearInPath': self.containsYearInPath(),
             'baseUrlID': self.urlID(),
         }
-        logging.debug(f"Features for URL {self.path}: {data}")
+        #logging.debug(f"Features for URL {self.path}: {data}")
         return data
