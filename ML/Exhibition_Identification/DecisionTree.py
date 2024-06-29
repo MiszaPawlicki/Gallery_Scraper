@@ -1,11 +1,14 @@
 import os
+
+import joblib
 import pandas as pd
 from matplotlib import pyplot as plt
-from sklearn.tree import DecisionTreeClassifier, plot_tree
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from ML.UrlFeaturizer import UrlFeaturizer
-import joblib
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+
+from ML.Exhibition_Identification.UrlFeaturizer import UrlFeaturizer
+
 
 def train_and_test_decision_tree_model(csv_path):
     # Load the dataset
@@ -101,8 +104,8 @@ def train_and_test_decision_tree_model(csv_path):
 
 def predict_url(url):
     # Load the model and featurizer with feature names
-    model_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\models\decision_tree_models.pkl'
-    featurizer_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\models\featurizer.pkl'
+    model_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\Exhibition_Identification\models\decision_tree_models.pkl'
+    featurizer_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\Exhibition_Identification\models\featurizer.pkl'
     with open(featurizer_path, 'rb') as f:
         featurizer, feature_names = joblib.load(f)
 
@@ -139,7 +142,7 @@ def predict_url(url):
 # Example usage
 def main():
     # Paths
-    csv_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\training_data\exhibition_href_training.csv'
+    csv_path = r'C:\Users\misza\OneDrive\Documents\Work\Personal Projects\Gallery Scraper\ML\Exhibition_Identification\training_data\exhibition_href_training.csv'
 
     # Train the model
     train_and_test_decision_tree_model(csv_path)
@@ -150,7 +153,7 @@ def main():
         'https://www.tate.org.uk/whats-on/tate-britain/sargent-and-fashion',
         'https://www.barbican.org.uk/whats-on/2024/event/this-exhibition',
         'https://www.saatchigallery.com/exhibition/glenmorangie-x-azuma-makoto',
-        'https://www.somersethouse.org.uk/whats-on/studio-01-2024',
+        'https://www.somersethouse.org.uk/whats-on/studio',
         'https://www.npg.org.uk/whatson/exhibitions/2024/six-lives',
         'https://www.dulwichpicturegallery.org.uk/whats-on/exhibitions/2024/november/tirzah-garwood-beyond-ravilious/'
     ]
