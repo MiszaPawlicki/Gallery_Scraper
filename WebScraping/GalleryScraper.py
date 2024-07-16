@@ -5,7 +5,6 @@ from urllib.parse import urlparse
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
-import WebScraping.GalleryScraper as scraper
 import ML.Exhibition_Identification.DecisionTree as dt
 
 
@@ -79,7 +78,7 @@ def load_selectors(json_path):
 def extract_data(url, soup, selectors):
     data = {}
     base_url = "{0.scheme}://{0.netloc}".format(urlparse(url))
-
+    data['url'] = url
     if base_url in selectors:
         css_selectors = selectors[base_url]
         for key, selector in css_selectors.items():
@@ -103,7 +102,7 @@ def get_all_exhibition_details(whats_on_url, selectors, driver):
             html_content = fetch_html_content(url, driver)
             soup = parse_html(html_content)
             details = extract_data(url, soup, selectors)
-            print(f"Details for {url}: {details}")
+            print(details)
             all_details.append(details)
         except Exception as e:
             print(f"Failed to process URL {url}: {str(e)}")
