@@ -86,7 +86,21 @@ def extract_data(url, soup, selectors):
             if key == 'image' and element:
                 data[key] = element.get('src', None)
             else:
-                data[key] = element.get_text(strip=True) if element else None
+                if element:
+                    # Check if there are any <span> tags inside the element
+                    span_elements = element.find_all('span')
+                    if span_elements:
+                        # Extract text from all direct child <span> elements
+                        text_parts = [span.get_text(strip=True) for span in span_elements]
+                        # Join the text parts with a space
+                        data[key] = ' '.join(text_parts)
+                    else:
+                        # If no <span> tags found, just extract text from the element itself
+                        data[key] = element.get_text(strip=True)
+                else:
+                    data[key] = None
+        if data[key] == '':
+            data[key] = None
     else:
         print(f"No selectors found for base URL: {base_url}")
 
