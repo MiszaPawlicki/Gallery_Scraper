@@ -6,6 +6,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 import ML.Exhibition_Identification.DecisionTree as dt
+from NLP.NLP import parseDateString
 
 
 # Load the Chrome driver once
@@ -85,6 +86,8 @@ def extract_data(url, soup, selectors):
             element = soup.select_one(selector)
             if key == 'image' and element:
                 data[key] = element.get('src', None)
+            elif key == 'date':
+                data['start_date'], data['end_date'] = parseDateString(element.get_text(strip=True))
             else:
                 if element:
                     # Check if there are any <span> tags inside the element

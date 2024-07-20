@@ -5,7 +5,6 @@ import psycopg2
 # Load environment variables from .env file
 load_dotenv()
 
-
 def create_table():
     """Create the exhibitions table if it does not exist."""
     conn = None
@@ -34,7 +33,8 @@ def create_table():
                 price TEXT,
                 image TEXT,
                 location VARCHAR(100),
-                date VARCHAR(100)  -- String format for date, e.g., 'YYYY-MM-DD'
+                start_date VARCHAR(100),  -- String format for start date, e.g., 'YYYY-MM-DD'
+                end_date VARCHAR(100)     -- String format for end date, e.g., 'YYYY-MM-DD'
             );
         """)
         conn.commit()
@@ -63,8 +63,8 @@ def insert_exhibition(exhibition):
         cur = conn.cursor()
 
         insert_query = """
-            INSERT INTO exhibitions (url, title, description, price, image, location, date)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO exhibitions (url, title, description, price, image, location, start_date, end_date)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (url) DO NOTHING
         """
         cur.execute(insert_query, (
@@ -74,7 +74,8 @@ def insert_exhibition(exhibition):
             exhibition['price'],
             exhibition.get('image', None),
             exhibition.get('location', None),
-            exhibition.get('date', None)
+            exhibition.get('start_date', None),
+            exhibition.get('end_date', None)
         ))
         conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
@@ -112,7 +113,8 @@ def main():
             'price': '£10',
             'image': 'https://d33hx0a45ryfj1.cloudfront.net/transform/134be982-b2b9-4e71-b50a-6dbfe4489d04/sally-rooney?io=transform:fill,width:600,height:600',
             'location': None,
-            'date': '2024-07-01'  # Example date as a string
+            'start_date': '2024-07-01',  # Example start date as a string
+            'end_date': '2024-07-31'     # Example end date as a string
         }
     ]
 
