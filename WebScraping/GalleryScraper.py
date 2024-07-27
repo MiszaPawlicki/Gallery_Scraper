@@ -75,7 +75,7 @@ def load_selectors(json_path):
         selectors = json.load(file)
     return selectors
 
-
+# TODO: date pulling / parsing is incorrect
 def extract_data(url, soup, selectors):
     data = {}
     base_url = "{0.scheme}://{0.netloc}".format(urlparse(url))

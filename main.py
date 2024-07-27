@@ -2,9 +2,9 @@ import WebScraping.GalleryScraper as scraper
 import Database.Database as db
 
 urls = [
-#    "https://www.southbankcentre.co.uk/whats-on?type=art-exhibitions",
+    "https://www.southbankcentre.co.uk/whats-on?type=art-exhibitions",
 #    "https://www.lissongallery.com/exhibitions",
-    "https://www.tate.org.uk/whats-on?date_range=from_now&event_type=exhibition&gallery_group=tate-britain&gallery_group=tate-modern",
+#    "https://www.tate.org.uk/whats-on?date_range=from_now&event_type=exhibition&gallery_group=tate-britain&gallery_group=tate-modern",
 #    "https://www.barbican.org.uk/whats-on/art-design",
 #    "https://www.saatchigallery.com/whats-on",
 #    "https://www.saatchigallery.com/whats-on/upcoming",

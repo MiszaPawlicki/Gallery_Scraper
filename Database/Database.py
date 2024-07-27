@@ -33,8 +33,8 @@ def create_table():
                 price TEXT,
                 image TEXT,
                 location VARCHAR(100),
-                start_date VARCHAR(100),  -- String format for start date, e.g., 'YYYY-MM-DD'
-                end_date VARCHAR(100)     -- String format for end date, e.g., 'YYYY-MM-DD'
+                start_date DATE,  -- String format for start date, e.g., 'YYYY-MM-DD'
+                end_date DATE     -- String format for end date, e.g., 'YYYY-MM-DD'
             );
         """)
         conn.commit()

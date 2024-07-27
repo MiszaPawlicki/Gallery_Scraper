@@ -3,8 +3,8 @@
     "title": "h1",
     "description": ".text-with-heading__text",
     "price": ".arrangement__details__table__price",
-    "image": "#root > div > div > div.layout > main > section > section.arrangement__hero.arrangement__hero--square > div > div.arrangement__hero__media-wrapper > div > div > figure > img",
-    "date": ".arrangement__details__col",
+    "image": ".arrangement__hero__media img",
+    "date": ".arrangement__hero__date",
     "location": ".location-selector"
   },
   "https://www.tate.org.uk": {

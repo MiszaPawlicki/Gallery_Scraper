@@ -5,6 +5,14 @@ import re
 
 cal = pdt.Calendar()
 
+from dateutil import parser
+from datetime import datetime
+import parsedatetime as pdt
+import re
+
+cal = pdt.Calendar()
+
+
 def parseDateString(time_string):
     try:
         # Check for date ranges
@@ -13,7 +21,7 @@ def parseDateString(time_string):
             if len(date_parts) == 2:
                 start_date = parser.parse(date_parts[0])
                 end_date = parser.parse(date_parts[1])
-                return (start_date, end_date)
+                return start_date, end_date
             else:
                 return None, None
 
@@ -35,7 +43,7 @@ def parseDateString(time_string):
                 start_date = datetime(*time_struct[:6])
                 end_date = start_date.replace(hour=end_time.hour, minute=end_time.minute)
                 start_date = start_date.replace(hour=start_time.hour, minute=start_time.minute)
-                return (start_date, end_date)
+                return start_date, end_date
             else:
                 return None, None
 
@@ -44,6 +52,7 @@ def parseDateString(time_string):
         return parsed_date, parsed_date
     except Exception as e:
         return None, None
+
 
 def main():
     # Test the function with the provided date strings
