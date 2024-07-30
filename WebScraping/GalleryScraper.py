@@ -1,3 +1,5 @@
+import os
+
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 import json
@@ -13,7 +15,13 @@ from NLP.NLP import parseDateString
 def load_chrome_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')  # Run in headless mode (without opening browser window)
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+    chrome_install = ChromeDriverManager().install()
+
+    folder = os.path.dirname(chrome_install)
+    chromedriver_path = os.path.join(folder, "chromedriver.exe")
+
+    service = ChromeService(chromedriver_path)
+    driver = webdriver.Chrome(service=service, options=options)
     return driver
 
 
@@ -82,28 +90,30 @@ def extract_data(url, soup, selectors):
     data['url'] = url
     if base_url in selectors:
         css_selectors = selectors[base_url]
-        for key, selector in css_selectors.items():
-            element = soup.select_one(selector)
+        for key, selector_list in css_selectors.items():
+            element = None
+            for selector in selector_list:
+                element = soup.select_one(selector)
+                if element:
+                    break
+
             if key == 'image' and element:
                 data[key] = element.get('src', None)
-            elif key == 'date':
+            elif key == 'date' and element:
                 data['start_date'], data['end_date'] = parseDateString(element.get_text(strip=True))
             else:
                 if element:
-                    # Check if there are any <span> tags inside the element
                     span_elements = element.find_all('span')
                     if span_elements:
-                        # Extract text from all direct child <span> elements
                         text_parts = [span.get_text(strip=True) for span in span_elements]
-                        # Join the text parts with a space
                         data[key] = ' '.join(text_parts)
                     else:
-                        # If no <span> tags found, just extract text from the element itself
                         data[key] = element.get_text(strip=True)
                 else:
                     data[key] = None
-        if data[key] == '':
-            data[key] = None
+
+            if data.get(key) == '':
+                data[key] = None
     else:
         print(f"No selectors found for base URL: {base_url}")
 

@@ -150,7 +150,7 @@ def main():
     exhibition_urls = [
         'https://www.southbankcentre.co.uk/whats-on/art-exhibitions/secondary-schools-morning-tavares-strachan?eventId=985129',
         'https://www.lissongallery.com/exhibitions/otobong-nkanga',
-        'https://www.tate.org.uk/whats-on/tate-britain/sargent-and-fashion',
+        'https://www.tate.org.uk/whats-on/tate-modern/anthony-mccall',
         'https://www.barbican.org.uk/whats-on/2024/event/this-exhibition',
         'https://www.saatchigallery.com/exhibition/glenmorangie-x-azuma-makoto',
         'https://www.somersethouse.org.uk/whats-on/studio',

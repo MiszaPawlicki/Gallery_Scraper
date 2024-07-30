@@ -25,6 +25,18 @@ def parseDateString(time_string):
             else:
                 return None, None
 
+        # Check for 'until <date>'
+        if time_string.lower().startswith('until '):
+            end_date_str = time_string[len('until '):].strip()
+            end_date = parser.parse(end_date_str)
+            return None, end_date
+
+        # Check for 'ongoing'
+        if time_string.lower() == 'ongoing':
+            current_date = datetime.now()
+            end_date = current_date + timedelta(weeks=1)
+            return None, end_date
+
         # Check for relative dates like "Third Tuesday of the month at 10.00–11.00"
         if 'of the month' in time_string:
             event_parts = re.split(r'\s+at\s+', time_string, 1)

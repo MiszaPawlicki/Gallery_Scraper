@@ -33,8 +33,8 @@ def create_table():
                 price TEXT,
                 image TEXT,
                 location VARCHAR(100),
-                start_date DATE,  -- String format for start date, e.g., 'YYYY-MM-DD'
-                end_date DATE     -- String format for end date, e.g., 'YYYY-MM-DD'
+                start_date DATE,
+                end_date DATE
             );
         """)
         conn.commit()
@@ -46,9 +46,8 @@ def create_table():
         if conn is not None:
             conn.close()
 
-
 def insert_exhibition(exhibition):
-    """Insert a single exhibition into the database."""
+    """Insert a single exhibition into the database, or update it if it already exists."""
     conn = None
     cur = None
     try:
@@ -65,7 +64,14 @@ def insert_exhibition(exhibition):
         insert_query = """
             INSERT INTO exhibitions (url, title, description, price, image, location, start_date, end_date)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (url) DO NOTHING
+            ON CONFLICT (url) DO UPDATE SET
+                title = EXCLUDED.title,
+                description = EXCLUDED.description,
+                price = EXCLUDED.price,
+                image = EXCLUDED.image,
+                location = EXCLUDED.location,
+                start_date = EXCLUDED.start_date,
+                end_date = EXCLUDED.end_date
         """
         cur.execute(insert_query, (
             exhibition['url'],
@@ -86,12 +92,10 @@ def insert_exhibition(exhibition):
         if conn is not None:
             conn.close()
 
-
 def insert_exhibitions(exhibition_list):
     """Insert a list of exhibitions into the database."""
     for exhibition in exhibition_list:
         insert_exhibition(exhibition)
-
 
 def main():
     print("Environment Variables:")
@@ -120,7 +124,6 @@ def main():
 
     # Insert exhibitions into the database
     insert_exhibitions(exhibitions)
-
 
 if __name__ == "__main__":
     main()
